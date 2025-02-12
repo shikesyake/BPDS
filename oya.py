@@ -2,11 +2,24 @@ import mediapipe as mp
 import cv2 as cv
 import socket
 
+import sys
+import time
+import datetime
+ 
+import RPi.GPIO as GPIO
+BUTTON = 3
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+input_state = GPIO.input(BUTTON)
+
 # burocas = ('255.255.255.0',8890)
 burocas = ('broadcasthost',8890)
 localhost = ('127.0.0.1',8890)
 #ソケット作成
 sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
+
 #通知までのカウント
 count = 0
 
@@ -22,6 +35,7 @@ fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')
 video = cv.VideoWriter('face_mesh_video.mp4', fourcc, 30, (w, h))
 
 while cap.isOpened():
+    
     tick = cv.getTickCount()
     success, image = cap.read()
     if not success:
@@ -59,18 +73,17 @@ while cap.isOpened():
             count = 0
         if count == 30: #30秒経過で通知
             print("通知しました")
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
             sock.sendto('akan'.encode(encoding='utf-8'),burocas)
             count = 0
             #スピーカーオンおく
 
-        if button == 1:
-            #スピーカー.off的な
-            if meido == y:
-                sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
-            print(f'停止ボタン押下')
-            button = 0
-            break #いったん検知したらbreak 継続動作するよう書き換え
+        # if button == 1:
+        #     #スピーカー.off的な
+        #     if meido == y:
+        #         sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
+        #     print(f'停止ボタン押下')
+        #     button = 0
+        #   break #いったん検知したらbreak 継続動作するよう書き換え
 
         
     fps = cv.getTickFrequency() / (cv.getTickCount() - tick) # fpsの計算

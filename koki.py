@@ -26,8 +26,8 @@ while True:
         message = message.decode(encoding='utf-8')
         print(f'[{message}]を受信しました')
         if message == f"akan":
-                print('窒息信号を受信しました')
-                sock.sendto('窒息信号を受信'.encode(encoding='utf-8'),cli_addr)
+                print('起動信号を受信しました')
+                sock.sendto('起動信号を受信'.encode(encoding='utf-8'),cli_addr)
                 print('受信確認を送信しました')
         elif message == f"tomareya":
                 print('停止信号を受信しました')
