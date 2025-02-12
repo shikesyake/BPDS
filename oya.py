@@ -2,16 +2,17 @@ import mediapipe as mp
 import cv2 as cv
 import socket
 
-import sys
-import time
-import datetime
+# ラズパイ用
+# import sys
+# import time
+# import datetime
  
-import RPi.GPIO as GPIO
-BUTTON = 3
+# import RPi.GPIO as GPIO
+# BUTTON = 3
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-input_state = GPIO.input(BUTTON)
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# input_state = GPIO.input(BUTTON)
 
 # burocas = ('255.255.255.0',8890)
 burocas = ('broadcasthost',8890)
