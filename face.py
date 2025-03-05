@@ -1,7 +1,6 @@
 import mediapipe as mp
 import cv2 as cv
-import socket
-
+from send import P2P,MessageType
 # ラズパイ用
 # import sys
 # import time
@@ -15,12 +14,12 @@ import socket
 # input_state = GPIO.input(BUTTON)
 
 # burocas = ('255.255.255.0',8890)
-burocas = ('broadcasthost',8890)
-localhost = ('127.0.0.1',8890)
-#ソケット作成
-sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
-
+# burocas = ('broadcasthost',8890)
+# localhost = ('127.0.0.1',8890)
+# #ソケット作成
+# sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
+# sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
+P2Psend = P2P(2)
 #通知までのカウント
 count = 0
 
@@ -74,7 +73,8 @@ while cap.isOpened():
             count = 0
         if count == 30: #30秒経過で通知
             print("通知しました")
-            sock.sendto('akan'.encode(encoding='utf-8'),burocas)
+            P2Psend.akan.sock
+            self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
             count = 0
             #スピーカーオンおく
 

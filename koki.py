@@ -18,6 +18,8 @@ sock.bind(locaddr)
 print('Waiting message')
 
 
+#LEDの点灯
+
 #if kensyutu == 1:
 while True:
     try :
