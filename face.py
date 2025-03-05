@@ -13,13 +13,7 @@ from send import P2P,MessageType
 # GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # input_state = GPIO.input(BUTTON)
 
-# burocas = ('255.255.255.0',8890)
-# burocas = ('broadcasthost',8890)
-# localhost = ('127.0.0.1',8890)
-# #ソケット作成
-# sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
-# sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
-P2Psend = P2P(2)
+P2Psend = P2P()
 #通知までのカウント
 count = 0
 
@@ -57,7 +51,7 @@ while cap.isOpened():
     
     #顔検知
     if results.multi_face_landmarks:
-        for face_landmarks in results.multi_face_landmarks:
+        for face_landmarks in resultsf.multi_face_landmarks:
             print(face_landmarks)
             mp_drawing.draw_landmarks(
             image=image,
@@ -73,8 +67,7 @@ while cap.isOpened():
             count = 0
         if count == 30: #30秒経過で通知
             print("通知しました")
-            P2Psend.akan.sock
-            self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
+            P2Psend.akan()
             count = 0
             #スピーカーオンおく
 
