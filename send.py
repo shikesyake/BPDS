@@ -8,8 +8,8 @@ localhost = ('127.0.0.1',8890)
 
 # メッセージの定義
 class MessageType(Enum):
-    START = b'tomareya'
-    STOP = b"akan"
+    START = b'akan'
+    STOP = b"tomareya"
     NONE = b""
 
 class P2P:
