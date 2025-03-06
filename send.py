@@ -20,7 +20,6 @@ class P2P:
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
         self.burocas = ('broadcasthost',8890)
 
-
     def bind(self):
         self.sock.bind(localhost)
     def bindb(self):
@@ -37,9 +36,13 @@ class P2P:
     def recv(self):
         try:
             message, cli_addr = self.sock.recvfrom(M_SIZE)
+            # message = message.decode(encoding='utf-8')
+            # message, cli_addr = self.sock.recvfrom(M_SIZE)
             if message == MessageType.START.value:
                 return MessageType.START
             elif message == MessageType.STOP.value:
                 return MessageType.STOP
         except socket.timeout: 
             return MessageType.NONE
+        #test
+        self.sock.sendto('Success'.encode(encoding='utf-8'), cli_addr)
