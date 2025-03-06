@@ -1,12 +1,18 @@
 import time
 from send import P2P ,MessageType
+import socket
+
+sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
+sock.settimeout(0.1)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
+localhost = ('127.0.0.1',8890)
 
 p2p = P2P()
 
 kensyutu = 0
 button = 0
 # ②自ホストで使用するIPアドレスとポート番号を指定
-p2p.bind()
+sock.bind(localhost)
 print('Waiting message')
 
 #LEDの点灯
@@ -23,19 +29,20 @@ while True:
 
     if message_type == MessageType.START:
         print('起動信号を受信しました')
-        music =on
+        music = on
         keiho = 1
 
     elif message_type == MessageType.STOP:
         print('停止信号を受信しました')
     
     elif message_type == MessageType.NONE:
+        exit
     
-    if button == 1:
-                sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
-                print(f'停止ボタン押下')
-                #スピーカー.off的な
-                button = 0
+    # if button == 1:
+    #             sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
+    #             print(f'停止ボタン押下')
+    #             #スピーカー.off的な
+    #             button = 0
 
 
 

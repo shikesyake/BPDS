@@ -5,6 +5,7 @@ from enum import Enum
 M_SIZE = 1024
 burocas = ('broadcasthost',8890)
 localhost = ('127.0.0.1',8890)
+localaddr = ('0.0.0.0',8890)
 
 # メッセージの定義
 class MessageType(Enum):
@@ -17,9 +18,13 @@ class P2P:
         self.sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
         self.sock.settimeout(0.1)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
+        self.burocas = ('broadcasthost',8890)
+
 
     def bind(self):
         self.sock.bind(localhost)
+    def bindb(self):
+        self.sock.bind(localaddr)
 
     def send(self, message_type):
         self.sock.sendto(message_type.value, burocas)
