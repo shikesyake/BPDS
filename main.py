@@ -18,13 +18,13 @@ from face import FaceMeshDetector
 
 
 # 定義
-P2Psend = P2P()
-FaceMesh = FaceMeshDetector()
+p2psend = P2P()
+facemesh = FaceMeshDetector()
 # バインド
-P2Psend.bind()
+p2psend.bind()
 
 # 実行
-FaceMesh.run()
+facemesh.run()
 
 #スピーカーオンおく
 
