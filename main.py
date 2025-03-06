@@ -21,7 +21,7 @@ from face import FaceMeshDetector
 P2Psend = P2P()
 FaceMesh = FaceMeshDetector()
 # バインド
-# P2Psend.bind()
+P2Psend.bind()
 
 # 実行
 FaceMesh.run()
