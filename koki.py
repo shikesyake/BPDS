@@ -21,16 +21,17 @@ print('Waiting message')
 while True:
     # Clientが受信待ちになるまで待つため
     time.sleep(1)
-
     message_type = p2p.recv()
+    # p2p.recv()
+
     #     # ③Clientからのmessageの受付開始
     # message = message.decode(encoding='utf-8')
     # print(f'[{message}]を受信しました')
 
     if message_type == MessageType.START:
         print('起動信号を受信しました')
-        music = on
-        keiho = 1
+        # music = on
+        # keiho = 1
 
     elif message_type == MessageType.STOP:
         print('停止信号を受信しました')
