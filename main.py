@@ -3,7 +3,7 @@ import cv2 as cv
 from send import P2P,MessageType
 from face import FaceMeshDetector
 
-# ラズパイ用
+# ラズパイ用 クラス化するなら別ファイルに移動
 # import sys
 # import time
 # import datetime
@@ -14,6 +14,8 @@ from face import FaceMeshDetector
 # GPIO.setmode(GPIO.BCM)
 # GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # input_state = GPIO.input(BUTTON)
+#ここまで
+
 
 # 定義
 P2Psend = P2P()
@@ -24,7 +26,7 @@ P2Psend.bind()
 # 実行
 FaceMesh.run()
 
-#         #スピーカーオンおく
+#スピーカーオンおく
 
 # if button == 1:
 #     #スピーカー.off的な
