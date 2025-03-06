@@ -31,7 +31,7 @@ python3 ./main.py
 ```
 
 koki.pyの起動
-```
+```sh
 python3 ./koki.py
 ```
 
