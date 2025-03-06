@@ -15,15 +15,16 @@ from face import FaceMeshDetector
 # GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # input_state = GPIO.input(BUTTON)
 
+# 定義
 P2Psend = P2P()
-P2Psend.bind()
 FaceMesh = FaceMeshDetector()
-#通知までのカウント
-count = 0
+# バインド
+P2Psend.bind()
 
+# 実行
 FaceMesh.run()
 
-    #         #スピーカーオンおく
+#         #スピーカーオンおく
 
 # if button == 1:
 #     #スピーカー.off的な
