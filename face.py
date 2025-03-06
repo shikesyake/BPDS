@@ -1,5 +1,6 @@
 import mediapipe as mp
 import cv2 as cv
+import time
 from send import P2P, MessageType
 # ラズパイ用
 # import sys
@@ -63,6 +64,7 @@ class FaceMeshDetector:
 
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
+                time.sleep(0.05)
             else:
                 print("顔が検出されなくなりました。")
                 print("通知まで:", 30 - self.count)
@@ -75,6 +77,7 @@ class FaceMeshDetector:
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     self.count = 0
+                    # time.sleep(0.1)
 
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
             cv.putText(
