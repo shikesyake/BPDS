@@ -1,5 +1,11 @@
 import socket
 import time
+import RPi.GPIO as GPIO
+
+#GPIOkankei
+led = 11
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(led, GPIO.OUT)
 
 M_SIZE = 1024
 
@@ -29,15 +35,22 @@ while True:
                 print('起動信号を受信しました')
                 sock.sendto('起動信号を受信'.encode(encoding='utf-8'),cli_addr)
                 print('受信確認を送信しました')
+                GPIO.output(led, 1)
+                time.sleep(3)
+                
+                
         elif message == f"tomareya":
                 print('停止信号を受信しました')
                 sock.sendto('停止信号を受信'.encode(encoding='utf-8'),cli_addr)
                 print('受信確認を送信しました')
         #鳴動後停止
-    except socket.timeout: 
+    except socket.timeout:
+        GPIO.output(led, 0)
+
         if button == 1:
             sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
             print(f'停止ボタン押下')
+            
             #スピーカー.off的な
             button = 0
         # while True:

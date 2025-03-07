@@ -3,16 +3,12 @@ import cv2 as cv
 import time
 from send import P2P, MessageType
 # ラズパイ用
-# import sys
-# import time
-# import datetime
+import RPi.GPIO as GPIO
 
-# import RPi.GPIO as GPIO
-# BUTTON = 3
+#GPIOkankei
+led = 11
 
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# input_state = GPIO.input(BUTTON)
+
 
 class FaceMeshDetector:
     def __init__(self):
@@ -28,7 +24,10 @@ class FaceMeshDetector:
         self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
         self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
         self.video = cv.VideoWriter('face_mesh_video.mp4', self.fourcc, 30, (self.w, self.h))
-    
+
+        self.GPIO.setmode(GPIO.BOARD)
+        self.GPIO.setup(led, GPIO.OUT)
+        
     # def cap(self):
     #     self.cap = cv.VideoCapture(0)
     #     self.cap1 = self.cap(self.capture)
@@ -64,18 +63,24 @@ class FaceMeshDetector:
 
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
-                time.sleep(0.05)
+##                time.sleep(0.05)
             else:
                 print("顔が検出されなくなりました。")
                 print("通知まで:", 30 - self.count)
                 self.count += 1
+                
+                time.sleep(0.1)
                 if results.multi_face_landmarks:
                     self.count = 0
                 if self.count == 30:
                     print("通知しました")
+                    GPIO.output(led, 1)
+                    
                     self.P2Psend.akan()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
+                    time.sleep(0.5)
+                    GPIO.output(led, 0)
                     self.count = 0
                     # time.sleep(0.1)
 

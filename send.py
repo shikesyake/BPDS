@@ -3,7 +3,7 @@ from enum import Enum
 
 # 定数
 M_SIZE = 1024
-burocas = ('broadcasthost',8890)
+burocas = ('255.255.255.255',8890)
 localhost = ('127.0.0.1',8890)
 localaddr = ('0.0.0.0',8890)
 
@@ -18,7 +18,7 @@ class P2P:
         self.sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
         self.sock.settimeout(0.1)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
-        self.burocas = ('broadcasthost',8890)
+        self.burocas = ('255.255.255.255',8890)
 
     def bind(self):
         self.sock.bind(localhost)
@@ -31,8 +31,10 @@ class P2P:
     #下要らんかも
 
     def akan(self):
-        self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
-
+        try:
+            self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
+        except:
+            self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
     def recv(self):
         try:
             message, cli_addr = self.sock.recvfrom(M_SIZE)
