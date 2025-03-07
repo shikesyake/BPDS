@@ -1,2 +1,5 @@
 *.mp4
 *.code-workspace
+venv
+__pycache__
+*.png
