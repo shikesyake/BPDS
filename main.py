@@ -22,9 +22,18 @@ p2psend = P2P()
 facemesh = FaceMeshDetector()
 # バインド
 p2psend.bind()
+def callback_bt():
+    print("bloadcastでアラートを送信")
+    facemesh.run(callback_bt)
+
 
 # 実行
 facemesh.run()
+print(通知中)
+if button == 1:
+    
+    led = 0
+
 
 #スピーカーオンおく
 

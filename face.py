@@ -65,6 +65,13 @@ class FaceMeshDetector:
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
                 time.sleep(0.05)
+            
+            # elif callback() == 1:
+            #     print("停止ボタン押下")
+            #     self.P2Psend.tomareya()
+            #     self.count = 0
+            #     break
+
             else:
                 print("顔が検出されなくなりました。")
                 print("通知まで:", 30 - self.count)
@@ -78,6 +85,7 @@ class FaceMeshDetector:
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     self.count = 0
                     # time.sleep(0.1)
+            
 
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
             cv.putText(
@@ -98,7 +106,12 @@ class FaceMeshDetector:
                 cv.imwrite(dt.isoformat() + ".png", image)
         self.face_mesh.close()
         self.cap.release()
+    #あとで
+    # def alert(self):
+        
 
+    # def handler(,callback):
+         
 if __name__ == "__main__":
     detector = FaceMeshDetector()
     detector.run()

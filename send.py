@@ -32,7 +32,8 @@ class P2P:
 
     def akan(self):
         self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
-
+    def tomareya(self):
+        self.sock.sendto('tomareya'.encode(encoding='utf-8'),burocas)
     def recv(self):
         try:
             message, cli_addr = self.sock.recvfrom(M_SIZE)
