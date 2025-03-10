@@ -1,3 +1,5 @@
+#　土台
+
 import RPi.GPIO as GPIO
 import time
 
