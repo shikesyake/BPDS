@@ -8,7 +8,9 @@ from send import P2P, MessageType
 #GPIOkankei
 led = 11
 
-
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(led, GPIO.OUT)
+        
 
 class FaceMeshDetector:
     def __init__(self):
@@ -89,16 +91,18 @@ def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
 
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
+                GPIO.output(led, 0)
 ##                time.sleep(0.05)
             else:
                 print("顔が検出されなくなりました。")
-                print("通知まで:", 30 - self.count)
+                print("通知まで:", 20 - self.count)
                 self.count += 1
                 
                 time.sleep(0.1)
                 if results.multi_face_landmarks:
                     self.count = 0
-                if self.count == 30:
+                    
+                if self.count == 20:
                     print("通知しました")
                     GPIO.output(led, 1)
                     
@@ -106,7 +110,7 @@ def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)
-                    GPIO.output(led, 0)
+##                    GPIO.output(led, 0)
                     self.count = 0
                     # time.sleep(0.1)
 
