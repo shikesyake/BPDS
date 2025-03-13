@@ -12,7 +12,7 @@ BUTTON = 3
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SPEAKER_PIN, GPIO.OUT)
 GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+#a 
 # classつけた
 # スピーカーをオンにする関数
 class Speaker:
