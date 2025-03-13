@@ -3,7 +3,7 @@ import cv2 as cv
 import time
 from send import P2P, MessageType
 # ラズパイ用
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 
 #GPIOkankei
 led = 11
@@ -19,18 +19,44 @@ class FaceMeshDetector:
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
         self.drawing_spec = self.mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
-        self.cap = cv.VideoCapture(0)
+        for i in range(10):
+            
+            self.cap += cv.VideoCapture
+        self.cap = (cv.VideoCapture(0))
         self.w = int(self.cap.get(cv.CAP_PROP_FRAME_WIDTH))
         self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
         self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
         self.video = cv.VideoWriter('face_mesh_video.mp4', self.fourcc, 30, (self.w, self.h))
 
-        self.GPIO.setmode(GPIO.BOARD)
-        self.GPIO.setup(led, GPIO.OUT)
-        
+        # self.cap2 = cv.VideoCapture(1)
+        # self.w2 = int(self.cap2.get(cv.CAP_PROP_FRAME_WIDTH))
+        # self.h2 = int(self.cap2.get(cv.CAP_PROP_FRAME_HEIGHT))         
+        # self.fourcc2 = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
+        # self.video2 = cv.VideoWriter('face_mesh_video2.mp4', self.fourcc2, 30, (self.w2, self.h2))
+ 
     # def cap(self):
     #     self.cap = cv.VideoCapture(0)
     #     self.cap1 = self.cap(self.capture)
+
+def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
+    """
+    利用可能なビデオデバイスのリストを取得する。
+
+    :param max_video_devices: チェックする最大のデバイス番号
+    :return: 利用可能なビデオデバイスの番号のリスト
+    """
+    available_video_devices: list[int] = []
+
+    for i in range(max_video_devices):
+        cap: cv2.VideoCapture = cv2.VideoCapture(i)
+        if cap is None or not cap.isOpened():
+            print(f"カメラが利用できません: {i}")
+        else:
+            print(f"カメラが利用できます: {i}")
+            available_video_devices.append(i)
+        cap.release()
+        return available_video_devices
+    
 
     def process_frame(self, image):
         
