@@ -24,6 +24,8 @@ FaceMesh = FaceMeshDetector()
 P2Psend.bind()
 
 # 実行
+FaceMesh.cap[0].open(0)
+FaceMesh.cap[1].open(1)
 FaceMesh.run()
 
 #スピーカーオンおく
