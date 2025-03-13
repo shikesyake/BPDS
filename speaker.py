@@ -36,6 +36,7 @@ class Speaker:
 speaker = Speaker()
 
  # ボタンの状態を監視してスピーカーを制御するループ
+button = 0 ##追加
 try:
     while True:
         input_state = GPIO.input(BUTTON)
