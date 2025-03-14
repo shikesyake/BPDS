@@ -16,6 +16,7 @@ class FaceMeshDetector:
     def __init__(self):
         self.P2Psend = P2P()
         self.count = 0
+        self.alert = 0
         self.mp_drawing = mp.solutions.drawing_utils  # 描画用のインスタンス
         self.mp_face_mesh = mp.solutions.face_mesh  # MLソリューションの顔メッシュインスタンス
         self.face_mesh = self.mp_face_mesh.FaceMesh(
@@ -91,6 +92,10 @@ def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
 
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
+                if self.alert == 1:
+                    self.count -= 1
+                    if self.count == 0:
+                        self.alert = 0
                 GPIO.output(led, 0)
 ##                time.sleep(0.05)
             else:
