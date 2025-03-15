@@ -2,15 +2,6 @@ import mediapipe as mp
 import cv2 as cv
 import time
 from send import P2P, MessageType
-# ラズパイ用
-# import RPi.GPIO as GPIO
-
-#GPIOkankei
-led = 11
-
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(led, GPIO.OUT)
-        
 
 class FaceMeshDetector:
     def __init__(self):
@@ -22,9 +13,9 @@ class FaceMeshDetector:
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             min_detection_confidence=0.5, min_tracking_confidence=0.5)
         self.drawing_spec = self.mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
-        for i in range(10):
+        # for i in range(10):
             
-            self.cap += cv.VideoCapture
+        #     self.cap += cv.VideoCapture
         self.cap = (cv.VideoCapture(0))
         self.w = int(self.cap.get(cv.CAP_PROP_FRAME_WIDTH))
         self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
@@ -41,24 +32,24 @@ class FaceMeshDetector:
     #     self.cap = cv.VideoCapture(0)
     #     self.cap1 = self.cap(self.capture)
 
-def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
-    """
-    利用可能なビデオデバイスのリストを取得する。
+    def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
+        """
+        利用可能なビデオデバイスのリストを取得する。
 
-    :param max_video_devices: チェックする最大のデバイス番号
-    :return: 利用可能なビデオデバイスの番号のリスト
-    """
-    available_video_devices: list[int] = []
+        :param max_video_devices: チェックする最大のデバイス番号
+        :return: 利用可能なビデオデバイスの番号のリスト
+        """
+        available_video_devices: list[int] = []
 
-    for i in range(max_video_devices):
-        cap: cv2.VideoCapture = cv2.VideoCapture(i)
-        if cap is None or not cap.isOpened():
-            print(f"カメラが利用できません: {i}")
-        else:
-            print(f"カメラが利用できます: {i}")
-            available_video_devices.append(i)
-        cap.release()
-        return available_video_devices
+        for i in range(max_video_devices):
+            cap: cv2.VideoCapture = cv2.VideoCapture(i)
+            if cap is None or not cap.isOpened():
+                print(f"カメラが利用できません: {i}")
+            else:
+                print(f"カメラが利用できます: {i}")
+                available_video_devices.append(i)
+            cap.release()
+            return available_video_devices
     
 
     def process_frame(self, image):
@@ -79,45 +70,70 @@ def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
                 connections=self.mp_face_mesh.FACEMESH_CONTOURS,
                 landmark_drawing_spec=self.drawing_spec,
                 connection_drawing_spec=self.drawing_spec)
-
+    
+    ### 安定するまで待機させる
+    def start(self):
+        self.runcount = 0
+        while self.cap.isOpened():
+                tick = cv.getTickCount()
+                success, image = self.cap.read()
+                if not success:
+                    continue
+                results, image = self.process_frame(image)
+                if results.multi_face_landmarks:
+                    print("起動まで", 10 - self.runcount)
+                    self.runcount += 1
+                    time.sleep(1)
+                    if self.runcount == 10:
+                        print("検知開始")                        
+                        self.P2Psend.kidou()
+                        # self.burocas = ('broadcasthost',8890)
+                        # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
+                        return ("kidou")
+                    else:
+                        continue
+    # def ruun(self):
+    #     while 
+    #     aaaa 
     def run(self):
         while self.cap.isOpened():
             tick = cv.getTickCount()
             success, image = self.cap.read()
-            if not success:
+            if not success: # カメラが使用できない場合
                 print("Ignoring empty camera frame.")
+                print("カメラが使用できません。")
+                print("通知まで:", 20 - self.count)
+                self.count += 1
+                if self.count == 20:
+                    print("通知しました")                    
+                    self.P2Psend.akan()
+                    # self.burocas = ('broadcasthost',8890)
+                    # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                 continue
-
             results, image = self.process_frame(image)
-
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
                 if self.alert == 1:
                     self.count -= 1
                     if self.count == 0:
                         self.alert = 0
-                GPIO.output(led, 0)
+                # GPIO.output(led, 0)
 ##                time.sleep(0.05)
             else:
                 print("顔が検出されなくなりました。")
                 print("通知まで:", 20 - self.count)
                 self.count += 1
-                
                 time.sleep(0.1)
                 if results.multi_face_landmarks:
                     self.count = 0
-                    
                 if self.count == 20:
-                    print("通知しました")
-                    GPIO.output(led, 1)
-                    
                     self.P2Psend.akan()
+                    print("通知しました")
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)
-##                    GPIO.output(led, 0)
                     self.count = 0
-                    # time.sleep(0.1)
+                    
 
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
             cv.putText(
@@ -134,7 +150,7 @@ def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
             if cv.waitKey(5) & 0xFF == 27:  # escで終了
                 break
             if cv.waitKey(5) & 0xFF == 32:  # spaceでスクリーンショット
-                dt = datetime.datetime.now()
+                dt = time.datetime.now()
                 cv.imwrite(dt.isoformat() + ".png", image)
         self.face_mesh.close()
         self.cap.release()
