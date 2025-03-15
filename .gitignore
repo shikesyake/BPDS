@@ -4,8 +4,3 @@ venv
 __pycache__
 *.png
 *.orig
-
-
-a.py
-async.py
-button.py
