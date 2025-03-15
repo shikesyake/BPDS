@@ -2,5 +2,8 @@
 *.code-workspace
 venv
 __pycache__
+MycroPython
 *.png
 *.orig
+*.mp3
+*.wav
