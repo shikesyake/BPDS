@@ -1,108 +1,160 @@
 import mediapipe as mp
 import cv2 as cv
-import socket
+import time
+from send import P2P, MessageType
 
-# ラズパイ用
-# import sys
-# import time
-# import datetime
+class FaceMeshDetector:
+    def __init__(self):
+        self.P2Psend = P2P()
+        self.count = 0
+        self.alert = 0
+        self.mp_drawing = mp.solutions.drawing_utils  # 描画用のインスタンス
+        self.mp_face_mesh = mp.solutions.face_mesh  # MLソリューションの顔メッシュインスタンス
+        self.face_mesh = self.mp_face_mesh.FaceMesh(
+            min_detection_confidence=0.5, min_tracking_confidence=0.5)
+        self.drawing_spec = self.mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+        # for i in range(10):
+            
+        #     self.cap += cv.VideoCapture
+        self.cap = (cv.VideoCapture(0))
+        self.w = int(self.cap.get(cv.CAP_PROP_FRAME_WIDTH))
+        self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
+        self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
+        self.video = cv.VideoWriter('face_mesh_video.mp4', self.fourcc, 30, (self.w, self.h))
+
+        # self.cap2 = cv.VideoCapture(1)
+        # self.w2 = int(self.cap2.get(cv.CAP_PROP_FRAME_WIDTH))
+        # self.h2 = int(self.cap2.get(cv.CAP_PROP_FRAME_HEIGHT))         
+        # self.fourcc2 = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
+        # self.video2 = cv.VideoWriter('face_mesh_video2.mp4', self.fourcc2, 30, (self.w2, self.h2))
  
-# import RPi.GPIO as GPIO
-# BUTTON = 3
+    # def cap(self):
+    #     self.cap = cv.VideoCapture(0)
+    #     self.cap1 = self.cap(self.capture)
 
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# input_state = GPIO.input(BUTTON)
+    def get_available_video_devices(max_video_devices: int = 10) -> list[int]:
+        """
+        利用可能なビデオデバイスのリストを取得する。
 
-# burocas = ('255.255.255.0',8890)
-burocas = ('broadcasthost',8890)
-localhost = ('127.0.0.1',8890)
-#ソケット作成
-sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
+        :param max_video_devices: チェックする最大のデバイス番号
+        :return: 利用可能なビデオデバイスの番号のリスト
+        """
+        available_video_devices: list[int] = []
 
-#通知までのカウント
-count = 0
-
-mp_drawing = mp.solutions.drawing_utils # 描画用のインスタンス
-mp_face_mesh = mp.solutions.face_mesh # MLソリューションの顔メッシュインスタンス
-face_mesh = mp_face_mesh.FaceMesh(
-    min_detection_confidence=0.5, min_tracking_confidence=0.5)
-drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
-cap = cv.VideoCapture(0)
-w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
-fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
-video = cv.VideoWriter('face_mesh_video.mp4', fourcc, 30, (w, h))
-
-while cap.isOpened():
+        for i in range(max_video_devices):
+            cap: cv2.VideoCapture = cv2.VideoCapture(i)
+            if cap is None or not cap.isOpened():
+                print(f"カメラが利用できません: {i}")
+            else:
+                print(f"カメラが利用できます: {i}")
+                available_video_devices.append(i)
+            cap.release()
+            return available_video_devices
     
-    tick = cv.getTickCount()
-    success, image = cap.read()
-    if not success:
-        print("Ignoring empty camera frame.")
-        # If loading a video, use 'break' instead of 'continue'.
-        continue
 
-    # Flip the image horizontally for a later selfie-view display, and convert
-    # the BGR image to RGB.
-    image = cv.cvtColor(cv.flip(image, 1), cv.COLOR_BGR2RGB)
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
-    image.flags.writeable = False
-    results = face_mesh.process(image)
-
-    # Draw the face mesh annotations on the image.
-    image.flags.writeable = True
-    image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
-    
-    #顔検知
-    if results.multi_face_landmarks:
-        for face_landmarks in results.multi_face_landmarks:
-            print(face_landmarks)
-            mp_drawing.draw_landmarks(
-            image=image,
-            landmark_list=face_landmarks,
-            connections=mp_face_mesh.FACEMESH_CONTOURS,
-            landmark_drawing_spec=drawing_spec,
-            connection_drawing_spec=drawing_spec)
-    else: #顔が消えたら
-        print("顔が検出されなくなりました。")
-        print("通知まで:",30 - count)
-        count += 1
-        if results.multi_face_landmarks: #カウント中に検出されたらリセット
-            count = 0
-        if count == 30: #30秒経過で通知
-            print("通知しました")
-            sock.sendto('akan'.encode(encoding='utf-8'),burocas)
-            count = 0
-            #スピーカーオンおく
-
-        # if button == 1:
-        #     #スピーカー.off的な
-        #     if meido == y:
-        #         sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
-        #     print(f'停止ボタン押下')
-        #     button = 0
-        #   break #いったん検知したらbreak 継続動作するよう書き換え
-
+    def process_frame(self, image):
         
-    fps = cv.getTickFrequency() / (cv.getTickCount() - tick) # fpsの計算
-    cv.putText(
-        image, 
-        "FPS: " + str(int(fps)), 
-        (image.shape[1] - 150, 40), 
-        cv.FONT_HERSHEY_PLAIN, 
-        2, 
-        (0, 255, 0),
-        2,
-        cv.LINE_AA)
-    cv.imshow('MediaPipe FaceMesh', image)
-    video.write(image)
-    if cv.waitKey(5) & 0xFF == 27: # escで終了
-        break
-    if cv.waitKey(5) & 0xFF == 32: # spaceでスクリーンショット
-        dt = datetime.datetime.now()
-        cv.imwrite(dt.isoformat() + ".png", image)
-face_mesh.close()
-cap.release()
+        image = cv.cvtColor(cv.flip(image, 1), cv.COLOR_BGR2RGB)
+        image.flags.writeable = False
+        results = self.face_mesh.process(image)
+        image.flags.writeable = True
+        image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
+        return results, image
+
+    def draw_landmarks(self, image, face_landmarks):
+        for face_landmarks in face_landmarks.multi_face_landmarks:
+            print(face_landmarks)
+            self.mp_drawing.draw_landmarks(
+                image=image,
+                landmark_list=face_landmarks,
+                connections=self.mp_face_mesh.FACEMESH_CONTOURS,
+                landmark_drawing_spec=self.drawing_spec,
+                connection_drawing_spec=self.drawing_spec)
+    
+    ### 安定するまで待機させる
+    def start(self):
+        self.runcount = 0
+        while self.cap.isOpened():
+                tick = cv.getTickCount()
+                success, image = self.cap.read()
+                if not success:
+                    continue
+                results, image = self.process_frame(image)
+                if results.multi_face_landmarks:
+                    print("起動まで", 10 - self.runcount)
+                    self.runcount += 1
+                    time.sleep(1)
+                    if self.runcount == 10:
+                        print("検知開始")                        
+                        self.P2Psend.kidou()
+                        # self.burocas = ('broadcasthost',8890)
+                        # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
+                        return ("kidou")
+                    else:
+                        continue
+    # def ruun(self):
+    #     while 
+    #     aaaa 
+    def run(self):
+        while self.cap.isOpened():
+            tick = cv.getTickCount()
+            success, image = self.cap.read()
+            if not success: # カメラが使用できない場合
+                print("Ignoring empty camera frame.")
+                print("カメラが使用できません。")
+                print("通知まで:", 20 - self.count)
+                self.count += 1
+                if self.count == 20:
+                    print("通知しました")                    
+                    self.P2Psend.akan()
+                    # self.burocas = ('broadcasthost',8890)
+                    # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
+                continue
+            results, image = self.process_frame(image)
+            if results.multi_face_landmarks:
+                self.draw_landmarks(image, results)
+                if self.alert == 1:
+                    self.count -= 1
+                    if self.count == 0:
+                        self.alert = 0
+                # GPIO.output(led, 0)
+##                time.sleep(0.05)
+            else:
+                print("顔が検出されなくなりました。")
+                print("通知まで:", 20 - self.count)
+                self.count += 1
+                time.sleep(0.1)
+                if results.multi_face_landmarks:
+                    self.count = 0
+                if self.count == 20:
+                    self.P2Psend.akan()
+                    print("通知しました")
+                    # self.burocas = ('broadcasthost',8890)
+                    # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
+                    time.sleep(0.5)
+                    self.count = 0
+                    
+
+            fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
+            cv.putText(
+                image, 
+                "FPS: " + str(int(fps)), 
+                (image.shape[1] - 150, 40), 
+                cv.FONT_HERSHEY_PLAIN, 
+                2, 
+                (0, 255, 0),
+                2,
+                cv.LINE_AA)
+            cv.imshow('MediaPipe FaceMesh', image)
+            self.video.write(image)
+            if cv.waitKey(5) & 0xFF == 27:  # escで終了
+                break
+            if cv.waitKey(5) & 0xFF == 32:  # spaceでスクリーンショット
+                dt = time.datetime.now()
+                cv.imwrite(dt.isoformat() + ".png", image)
+        self.face_mesh.close()
+        self.cap.release()
+
+if __name__ == "__main__":
+    detector = FaceMeshDetector()
+    detector.run()
