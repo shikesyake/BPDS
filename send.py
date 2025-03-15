@@ -1,6 +1,6 @@
 import socket
 from enum import Enum
-from button import Button
+# from button import Button
 
 # 定数
 M_SIZE = 1024
@@ -33,9 +33,22 @@ class P2P:
 
     def akan(self):
         try:
-            self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
+            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
         except:
-            self.sock.sendto('akan'.encode(encoding='utf-8'),burocas)
+            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
+    
+    def kidou(self):
+        try:
+            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
+        except:
+            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
+    
+    def tomareya(self):
+        try:
+            self.sock.sendto('tomareya'.encode(encoding='utf-8'),burocas)
+        except:
+            self.sock.sendto('tomareya'.encode(encoding='utf-8'),burocas)
+   
     def recv(self):
         try:
             message, cli_addr = self.sock.recvfrom(M_SIZE)
