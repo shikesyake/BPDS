@@ -1,6 +1,7 @@
 import socket
 import time
 import RPi.GPIO as GPIO
+import subprocess
 
 #GPIOkankei
 led = 11
@@ -36,6 +37,7 @@ while True:
                 sock.sendto('起動信号を受信'.encode(encoding='utf-8'),cli_addr)
                 print('受信確認を送信しました')
                 GPIO.output(led, 1)
+                subprocess.Popen(['mpg123','-o oss',  '-R /home/user/BPDS/test.mp3'])
                 time.sleep(3)
                 
                 

@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 
 #GPIOkankei
 led = 11
+sp = 35
 gpio_sw = 13
 GPIO.setmode(GPIO.BOARD)
 
@@ -11,19 +12,22 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(gpio_sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 time.sleep(0.1)
 #out
-GPIO.setup(led, GPIO.OUT)
-
-GPIO.output(led, 0)
+GPIO.setup(sp, GPIO.OUT, initial=GPIO.LOW)
+p = GPIO.PWM(sp,1)
+GPIO.output(sp, 0)
 status = 0
 
-
+p.start(50)
 while True:
     sw = GPIO.input(gpio_sw)
     if sw == 0:
-        GPIO.output(led, 1)
-        time.sleep(0.5)
+        p.ChangeFrequency(5000)
+##        GPIO.output(sp, GPIO.HIGH)
+        print("on")
+        time.sleep(5)
     else:
-        GPIO.output(led, 0)
+        
+        GPIO.output(sp, GPIO.LOW)
 
 ##        if button == 1:
 ##            sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)

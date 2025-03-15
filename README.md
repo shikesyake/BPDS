@@ -1,6 +1,8 @@
 # BPDS
 BPDS-幼児うつぶせ検出装置-
 
+### envでの実行用
+sudo BPDS/venv/bin/python3 BPDS/main.py
 
 ## Macでの環境構築
 
