@@ -1,38 +1,38 @@
-
+from gpiozero import LED, Button
+from signal import pause
 import sys
 import time
 import datetime
- 
-import RPi.GPIO as GPIO
+from send import P2P
 
-BUTTON = 13
+P2Psend = P2P()
+led = LED("BOARD11")
+button = Button("BOARD13", pull_up=False)
+sp=35
 
-class Callback(self):
+class GPIO():
     def __init__(self):
-        self.BUTTON = 13
-        
-    def main():
-        try:        
-            # 操作対象のピンは「GPIOn」の"n"を指定する
-            GPIO.setmode(GPIO.BOARD)
-            # BUTTONがつながるGPIOピンの動作は「入力」「プルアップあり」
-            GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            
-            # 立ち下がり（GPIO.FALLING）を検出する（プルアップなので通常時1／押下時0）
-            GPIO.add_event_detect(BUTTON, GPIO.FALLING, bouncetime=200)
-            # イベント発生時のコールバック関数を登録
-            GPIO.add_event_callback(BUTTON, button_pressed)
-            
+        self.button = 13
+        self.led = 11
+    def button(self):
+        while True:
+            if button.when_pressed == True:
+                return 1
+            else:
+                return 0
+    # def waitbutton(self):
+    #     button.wait_for_press()
+    def on():
+            led.brink(on_time=0.5,off_time = 1,ackground = True )
+
+
+    def off():
+            led.off()
+            button.wait_for_press
             # 無限ループ
             while True:
                 # 主処理は何もしない
                 time.sleep(1)
-        except KeyboardInterrupt:
-            print(error)
-        # GPIOの設定をリセット
-        GPIO.cleanup()
-        
-        return 0
 
 def button_callback(channel):
     button = 1

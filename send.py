@@ -9,10 +9,11 @@ localhost = ('127.0.0.1',8890)
 localaddr = ('0.0.0.0',8890)
 
 # メッセージの定義
-class MessageType(Enum):
-    START = b'akan'
+class MessageData(Enum):
+    START = b"kidousitade"
+    ALERT = b'akan'
     STOP = b"tomareya"
-    NONE = b""
+    HAYOKOI = b""
 
 class P2P:
     def __init__(self):
@@ -26,39 +27,28 @@ class P2P:
     def bindb(self):
         self.sock.bind(localaddr)
 
-    def send(self, message_type):
-        self.sock.sendto(message_type.value, burocas)
+
+    def send(self, data):
+        for i in range(3):
+            try:
+                self.sock.sendto(data, burocas)
+            except:
+                print("")
     
     #下要らんかも
 
     def akan(self):
-        try:
-            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
-        except:
-            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
+        self.send(MessageData.ALERT.value)
     
     def kidou(self):
-        try:
-            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
-        except:
-            self.sock.sendto('kidou'.encode(encoding='utf-8'),burocas)
-    
+        self.send(MessageData.START.value)
+
     def tomareya(self):
-        try:
-            self.sock.sendto('tomareya'.encode(encoding='utf-8'),burocas)
-        except:
-            self.sock.sendto('tomareya'.encode(encoding='utf-8'),burocas)
-   
+        self.send(MessageData.STOP.value)
+        
     def recv(self):
         try:
             message, cli_addr = self.sock.recvfrom(M_SIZE)
-            # message = message.decode(encoding='utf-8')
-            # message, cli_addr = self.sock.recvfrom(M_SIZE)
-            if message == MessageType.START.value:
-                return MessageType.START
-            elif message == MessageType.STOP.value:
-                return MessageType.STOP
+            return message
         except socket.timeout: 
-            return MessageType.NONE
-        #test
-        self.sock.sendto('Success'.encode(encoding='utf-8'), cli_addr)
+            return MessageData.HAYOKOI.value

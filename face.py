@@ -1,11 +1,10 @@
 import mediapipe as mp
 import cv2 as cv
 import time
-from send import P2P, MessageType
+from send import P2P, MessageData
 
 class FaceMeshDetector:
     def __init__(self):
-        self.P2Psend = P2P()
         self.count = 0
         self.alert = 0
         self.mp_drawing = mp.solutions.drawing_utils  # 描画用のインスタンス
@@ -63,7 +62,7 @@ class FaceMeshDetector:
 
     def draw_landmarks(self, image, face_landmarks):
         for face_landmarks in face_landmarks.multi_face_landmarks:
-            print(face_landmarks)
+            # print(face_landmarks)
             self.mp_drawing.draw_landmarks(
                 image=image,
                 landmark_list=face_landmarks,
@@ -72,7 +71,7 @@ class FaceMeshDetector:
                 connection_drawing_spec=self.drawing_spec)
     
     ### 安定するまで待機させる
-    def start(self):
+    def start(self,start_func):
         self.runcount = 0
         while self.cap.isOpened():
                 tick = cv.getTickCount()
@@ -86,7 +85,7 @@ class FaceMeshDetector:
                     time.sleep(1)
                     if self.runcount == 10:
                         print("検知開始")                        
-                        self.P2Psend.kidou()
+                        start_func()
                         # self.burocas = ('broadcasthost',8890)
                         # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                         return ("kidou")
@@ -95,7 +94,7 @@ class FaceMeshDetector:
     # def ruun(self):
     #     while 
     #     aaaa 
-    def run(self):
+    def run(self,start_func,alert_func,stop_func):
         while self.cap.isOpened():
             tick = cv.getTickCount()
             success, image = self.cap.read()
@@ -106,7 +105,7 @@ class FaceMeshDetector:
                 self.count += 1
                 if self.count == 20:
                     print("通知しました")                    
-                    self.P2Psend.akan()
+                    alert_func()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                 continue
@@ -127,8 +126,8 @@ class FaceMeshDetector:
                 if results.multi_face_landmarks:
                     self.count = 0
                 if self.count == 20:
-                    self.P2Psend.akan()
                     print("通知しました")
+                    alert_func()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)
