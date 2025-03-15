@@ -24,10 +24,10 @@ FaceMesh = FaceMeshDetector()
 P2Psend.bind()
 
 # 実行
-FaceMesh.cap[0].open(0)
-FaceMesh.cap[1].open(1)
-FaceMesh.run()
-
+# FaceMesh.cap[0].open(0)
+# FaceMesh.cap[1].open(1)
+if FaceMesh.start() == 'kidou':
+    FaceMesh.run()
 #スピーカーオンおく
 
 # if button == 1:
