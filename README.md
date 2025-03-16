@@ -2,11 +2,12 @@
 BPDS-幼児うつぶせ検出装置-
 
 ### envでの実行用
+```sh
 cd BPDS/
 source venv/bin/activate
 sudo venv/bin/python3 main.py
 sudo venv/bin/python3 kokit.py
-
+```
 ## Macでの環境構築
 
 #### 1. 公式からPython3.12.9をインストール
