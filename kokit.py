@@ -1,28 +1,63 @@
 import socket
 import time
-import subprocess
 from send import P2P, MessageData
 from button import GPIO
 
 gpio = GPIO()
-
 p2p = P2P()
-p2p.bindb()
+
+START = f'kidousitade'
+ALERT = f'akan'
+STOP = f'tomareya'
+HAYOKOI = f''
+
+M_SIZE = 1024
+localaddr = ('0.0.0.0', 8890)
+burocas = ('255.255.255.255',8890)
+# ①ソケットを作成する
+sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
+sock.settimeout(0.1)
+print('create socket')
+sock.bind(localaddr)
 
 while True:
-    print("受信")
-    data = p2p.recv()
-    if data == MessageData.ALERT:
-        print('ALERT受信')
-        gpio.on()
-    elif data == MessageData.STOP:
-        print('STOP受信')
-        gpio.off()
-    elif data == MessageData.START:
-        print('親機が起動しました')
-    if gpio.button == 1:
-        p2p.tomareya()
-        print('停止ボタン押下')
+    try:
+        # ③Clientからのmessageの受付開始
+        message, cli_addr = sock.recvfrom(M_SIZE)
+        message = message.decode(encoding='utf-8')
+        print(f'[{message}]を受信しました')
+        value = gpio.Value()
+        if f'{message}' == "akan":
+            print('ALERT受信')
+            gpio.on()
+
+        elif f'{message}' == "tomareya" or Value == 1:
+            print('STOP受信')
+            gpio.off()
+            #鳴動後停止
+
+        elif f'{message}' == "kidousitade":
+            print('親機が起動しました')
+    except socket.timeout:
+        continue
+    except KeyboardInterrupt:
+        print ('\n . . .\n')
+        self.sock.close()
+
+##    if data == f"akan":
+##        print('ALERT受信')
+##        gpio.on()
+##    elif data == f"tomareya":
+##        print('STOP受信')
+##        gpio.off()
+##    elif data == f"kidousitade":
+##        print('親機が起動しました')
+##    else:
+##        None
+
+##    if gpio.button == 1:
+##        p2p.tomareya()
+##        print('停止ボタン押下')
 
 # gpio = GPIO()
 # M_SIZE = 1024

@@ -7,6 +7,7 @@ class FaceMeshDetector:
     def __init__(self):
         self.count = 0
         self.alert = 0
+        self.p2p = P2P()
         self.mp_drawing = mp.solutions.drawing_utils  # 描画用のインスタンス
         self.mp_face_mesh = mp.solutions.face_mesh  # MLソリューションの顔メッシュインスタンス
         self.face_mesh = self.mp_face_mesh.FaceMesh(
@@ -85,7 +86,7 @@ class FaceMeshDetector:
                     time.sleep(1)
                     if self.runcount == 10:
                         print("検知開始")                        
-                        start_func()
+                        self.p2p.kidou()
                         # self.burocas = ('broadcasthost',8890)
                         # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                         return ("kidou")
@@ -105,7 +106,7 @@ class FaceMeshDetector:
                 self.count += 1
                 if self.count == 20:
                     print("通知しました")                    
-                    alert_func()
+                    self.p2p.akan()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                 continue
@@ -127,7 +128,7 @@ class FaceMeshDetector:
                     self.count = 0
                 if self.count == 20:
                     print("通知しました")
-                    alert_func()
+                    self.p2p.akan()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)

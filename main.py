@@ -21,22 +21,21 @@ from face import FaceMeshDetector
 P2Psend = P2P()
 FaceMesh = FaceMeshDetector()
 # バインド
-P2Psend.bind()
+##P2Psend.bind()
 
-
-def alert_func():
-    print("コールバックalertを実行")
-    P2Psend.akan()
 def start_func():
     P2Psend.kidou()
+
+def alert_func():
+    P2Psend.akan()
 def stop_func():
     P2Psend.tomareya()
-
 # 実行
 # FaceMesh.cap[0].open(0)
 # FaceMesh.cap[1].open(1)
 if FaceMesh.start(start_func) == 'kidou':
-    FaceMesh.run(start_func,alert_func,stop_func)
+    exit
+FaceMesh.run(start_func,alert_func,stop_func)
 #スピーカーオンおく
 
 # if button == 1:

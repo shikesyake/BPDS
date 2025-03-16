@@ -10,17 +10,19 @@ localaddr = ('0.0.0.0',8890)
 
 # メッセージの定義
 class MessageData(Enum):
-    START = b"kidousitade"
-    ALERT = b'akan'
-    STOP = b"tomareya"
-    HAYOKOI = b""
+    START = 'kidousitade'
+    ALERT = 'akan'
+    STOP = 'tomareya'
+    HAYOKOI = ''
 
 class P2P:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
-        self.sock.settimeout(0.1)
+        self.sock.settimeout(0.2)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # ブロードキャストを許可
         self.burocas = ('255.255.255.255',8890)
+        self.localhost = ('127.0.0.1',8890)
+        self.localaddr = ('0.0.0.0',8890)
 
     def bind(self):
         self.sock.bind(localhost)
@@ -28,27 +30,35 @@ class P2P:
         self.sock.bind(localaddr)
 
 
+
+    
+    #下要らんかも
+
+    def akan(self):
+        self.sock.sendto(b'akan', burocas)
+   
+    def kidou(self):
+        self.sock.sendto(b"kidousitade", burocas)
+
+    def tomareya(self):
+        self.sock.sendto(b"tomareya", burocas)
+
     def send(self, data):
         for i in range(3):
             try:
                 self.sock.sendto(data, burocas)
             except:
                 print("")
-    
-    #下要らんかも
 
-    def akan(self):
-        self.send(MessageData.ALERT.value)
-    
-    def kidou(self):
-        self.send(MessageData.START.value)
 
-    def tomareya(self):
-        self.send(MessageData.STOP.value)
         
-    def recv(self):
-        try:
-            message, cli_addr = self.sock.recvfrom(M_SIZE)
-            return message
-        except socket.timeout: 
-            return MessageData.HAYOKOI.value
+##    def recv(self):
+##        try:
+##            message, cli_addr = self.sock.recvfrom(1024)
+##            message = message.decode(encoding='utf-8')
+##            return f'{message}'
+##        except socket.timeout:
+##            return "None"
+##        except KeyboardInterrupt:
+##            print ('\n . . .\n')
+##            self.sock.close()
