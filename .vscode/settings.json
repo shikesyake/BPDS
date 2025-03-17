@@ -2,6 +2,7 @@
     "files.autoSave": "onFocusChange",
     "python.autoComplete.extraPaths": [
       "./Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/mediapipe/__init__.py",
-      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/cv2/__init__.py"
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/cv2/__init__.py",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/gpiozero/__init__.py"
     ]
   }
