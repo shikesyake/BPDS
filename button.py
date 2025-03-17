@@ -1,5 +1,4 @@
 import gpiozero
-import lgpio
 from signal import pause
 import sys
 import time
@@ -10,11 +9,7 @@ ON=1
 OFF=0
 
 p2p = P2P()
-##led = LED("BOARD11")
-##button = Button("BOARD13", pull_up=False)
-##sp=35
-##GPIOZERO_PIN_FACTORY=lgpio
-##led = gpiozero.DigitalinputDevice(pin=27, pullup=True)
+
 class GPIO():
     def __init__(self):
         self.button = gpiozero.Button(19, pull_up=True)

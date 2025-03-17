@@ -65,30 +65,30 @@ class FaceMeshDetector:
                 connections=self.mp_face_mesh.FACEMESH_CONTOURS,
                 landmark_drawing_spec=self.drawing_spec,
                 connection_drawing_spec=self.drawing_spec)
-    
-    ### 安定するまで待機させる
-    def start(self,start_func):
+
+    def start(self):    # 安定するまで待機させる
         self.runcount = 0
         while self.cap.isOpened():
-                tick = cv.getTickCount()
-                success, image = self.cap.read()
-                if not success:
+            tick = cv.getTickCount()
+            success, image = self.cap.read()
+            if not success: # カメラが使用できない場合
+                print("Ignoring empty camera frame.")
+                continue
+            results, image = self.process_frame(image)
+            if results.multi_face_landmarks:
+                print("起動まで", 10 - self.runcount)
+                self.runcount += 1
+                time.sleep(1)
+                if self.runcount == 10:
+                    print("検知開始")                        
+                    self.p2p.tuitade()
+                    return ("kidou")
+                else:
                     continue
-                results, image = self.process_frame(image)
-                if results.multi_face_landmarks:
-                    print("起動まで", 10 - self.runcount)
-                    self.runcount += 1
-                    time.sleep(1)
-                    if self.runcount == 10:
-                        print("検知開始")                        
-                        self.p2p.tuitade()
-                        return ("kidou")
-                    else:
-                        continue
     # def ruun(self):
     #     while 
     #     aaaa 
-    def run(self,start_func,alert_func,stop_func):
+    def run(self):
         while self.cap.isOpened():
             tick = cv.getTickCount()
             success, image = self.cap.read()
@@ -100,19 +100,16 @@ class FaceMeshDetector:
                 if self.count == 20:
                     print("通知しました")                    
                     self.p2p.akan()
-                    # self.burocas = ('broadcasthost',8890)
-                    # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
-                continue
+                    continue
             results, image = self.process_frame(image)
-            if results.multi_face_landmarks:
+            if results.multi_face_landmarks: #カメラ使用可、顔が検出された場合
                 self.draw_landmarks(image, results)
+                # インターバル的なの設置予定
                 if self.alert == 1:
                     self.count -= 1
                     if self.count == 0:
                         self.alert = 0
-                # GPIO.output(led, 0)
-##                time.sleep(0.05)
-            else:
+            else:  # カメラ使用可、顔が検出されなかった場合
                 print("顔が検出されなくなりました。")
                 print("通知まで:", 20 - self.count)
                 self.count += 1
@@ -122,12 +119,9 @@ class FaceMeshDetector:
                 if self.count == 20:
                     print("通知しました")
                     self.p2p.akan()
-                    # self.burocas = ('broadcasthost',8890)
-                    # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)
                     self.count = 0
                     
-
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
             cv.putText(
                 image, 
