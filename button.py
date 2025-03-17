@@ -36,51 +36,11 @@ class GPIO():
                  self.buz.on()
              self.tick_status = not(self.tick_status)
 
-##    def button(self):
-##        while True:
-##            if self.button.is_pressed:
-##                return 1
-##            else:
-##                return 0
-    # def waitbutton(self):
-    #     button.wait_for_press()
     def on(self):
        self.status = ON
-##        else:
-##            continue
 
-##            except KeyboardInterrupt:
-##                print ('\n . . .\n')
-##                gpio.cleanup()
-####                self.button.wait_for_press()
-##            except:
-##                continue
-
-
-
-        
-##      self.led.on()
-##      time.sleep(3)
-##      self.led.off()
-        #下直す
     def is_pressed(self):
         return self.button.is_pressed == 1
 
     def off(self):
        self.status = OFF
-            # 無限ループ
-##            while True:
-##                # 主処理は何もしない
-##                time.sleep(1)
-
-    def button_callback(channel):
-        button = 1
-
-    def button_pressed(gpio_no):
-        button = 1
-
-
-    def run(sec=0):
-        motor.high()
-        clock.sleep(sec)
-        motor.low()
