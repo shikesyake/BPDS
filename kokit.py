@@ -33,7 +33,7 @@ while True:
         message = message.decode(encoding='utf-8')
         print(f'[{message}]を受信しました')
 
-        if message == "kidousitade":
+        if message == "tuitade":
             print('親機が起動しました')
         elif message == "akan":
             print('ALERT受信')
@@ -48,7 +48,7 @@ while True:
         continue
     except KeyboardInterrupt:
         print ('\n . . .\n')
-        self.sock.close()
+        sock.close()
 
 
 

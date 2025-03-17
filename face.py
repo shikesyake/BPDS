@@ -81,9 +81,7 @@ class FaceMeshDetector:
                     time.sleep(1)
                     if self.runcount == 10:
                         print("検知開始")                        
-                        self.p2p.kidou()
-                        # self.burocas = ('broadcasthost',8890)
-                        # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
+                        self.p2p.tuitade()
                         return ("kidou")
                     else:
                         continue

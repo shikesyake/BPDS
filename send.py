@@ -37,8 +37,8 @@ class P2P:
     def akan(self):
         self.sock.sendto(b'akan', burocas)
    
-    def kidou(self):
-        self.sock.sendto(b"kidousitade", burocas)
+    def tuitade(self):
+        self.sock.sendto(b"tuitade", burocas)
 
     def tomareya(self):
         self.sock.sendto(b"tomareya", burocas)

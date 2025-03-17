@@ -29,18 +29,13 @@ while True:
         message, cli_addr = sock.recvfrom(M_SIZE)
         message = message.decode(encoding='utf-8')
         print(f'[{message}]を受信しました')
-        if message == f"tomareya":
-                print('停止信号を受信しました')
-                sock.sendto('停止信号を受信'.encode(encoding='utf-8'),cli_addr)
-                print('受信確認を送信しました')
-        #鳴動後停止
-    except socket.timeout:
-        
-        if button == 1:
-            sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
-            print(f'停止ボタン押下')
-            
-            button = 0
+
+        if message == "tuitade":
+            print('親機が起動しました')
+        elif message == "akan":
+            print('ALERT受信')
+        elif message == "tomareya":
+            print('STOP受信')
         # while True:
         #     if message != ("tomareya"):
         #         print('寺阪を受信しました')
@@ -48,11 +43,8 @@ while True:
         #         print('受信確認を送信しました')
         #         break
 
-        # Clientが受信待ちになるまで待つため
-        time.sleep(1)
-
-        # ④Clientへ受信完了messageを送信
-        
+    except socket.timeout:
+        continue
     except KeyboardInterrupt:
         print ('\n . . .\n')
         sock.close()
