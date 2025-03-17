@@ -16,33 +16,40 @@ localaddr = ('0.0.0.0', 8890)
 burocas = ('255.255.255.255',8890)
 # ①ソケットを作成する
 sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
-sock.settimeout(0.1)
+sock.settimeout(0.01)
 print('create socket')
 sock.bind(localaddr)
 
+
 while True:
+    if gpio.is_pressed():
+        p2p.tomareya()
+        print('停止ボタン押下')
+    gpio.tick()
     try:
         # ③Clientからのmessageの受付開始
+        time.sleep(0.2)
         message, cli_addr = sock.recvfrom(M_SIZE)
         message = message.decode(encoding='utf-8')
         print(f'[{message}]を受信しました')
-        value = gpio.Value()
-        if f'{message}' == "akan":
+
+        if message == "kidousitade":
+            print('親機が起動しました')
+        elif message == "akan":
             print('ALERT受信')
             gpio.on()
-
-        elif f'{message}' == "tomareya" or Value == 1:
+        elif message == "tomareya":
             print('STOP受信')
             gpio.off()
             #鳴動後停止
 
-        elif f'{message}' == "kidousitade":
-            print('親機が起動しました')
+        
     except socket.timeout:
         continue
     except KeyboardInterrupt:
         print ('\n . . .\n')
         self.sock.close()
+
 
 ##    if data == f"akan":
 ##        print('ALERT受信')
@@ -55,9 +62,7 @@ while True:
 ##    else:
 ##        None
 
-##    if gpio.button == 1:
-##        p2p.tomareya()
-##        print('停止ボタン押下')
+
 
 # gpio = GPIO()
 # M_SIZE = 1024
