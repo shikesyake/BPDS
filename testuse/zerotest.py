@@ -19,3 +19,12 @@ while True:
         print("Button is not pressed")
         led.off()
         time.sleep(1)
+
+##    def button(self):
+##        while True:
+##            if self.button.is_pressed:
+##                return 1
+##            else:
+##                return 0
+    # def waitbutton(self):
+    #     button.wait_for_press()
