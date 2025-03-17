@@ -2,7 +2,7 @@ import time
 import gpiozero
 ##import socket
 ##import time
-##from send import P2P, MessageData
+##from send import P2P
 ##from button import GPIO
 ##
 ##gpio = GPIO()

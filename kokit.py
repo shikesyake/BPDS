@@ -1,6 +1,6 @@
 import socket
 import time
-from send import P2P, MessageData
+from send import P2P
 from button import GPIO
 
 gpio = GPIO()
@@ -49,6 +49,18 @@ while True:
     except KeyboardInterrupt:
         print ('\n . . .\n')
         self.sock.close()
+
+
+
+
+
+
+###########################
+##                       ##  
+##      旧独立版子機       ##
+##                       ##       
+###########################
+
 
 
 ##    if data == f"akan":

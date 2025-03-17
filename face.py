@@ -1,7 +1,7 @@
 import mediapipe as mp
 import cv2 as cv
 import time
-from send import P2P, MessageData
+from send import P2P
 
 class FaceMeshDetector:
     def __init__(self):
@@ -22,12 +22,7 @@ class FaceMeshDetector:
         self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
         self.video = cv.VideoWriter('face_mesh_video.mp4', self.fourcc, 30, (self.w, self.h))
 
-        # self.cap2 = cv.VideoCapture(1)
-        # self.w2 = int(self.cap2.get(cv.CAP_PROP_FRAME_WIDTH))
-        # self.h2 = int(self.cap2.get(cv.CAP_PROP_FRAME_HEIGHT))         
-        # self.fourcc2 = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
-        # self.video2 = cv.VideoWriter('face_mesh_video2.mp4', self.fourcc2, 30, (self.w2, self.h2))
- 
+
     # def cap(self):
     #     self.cap = cv.VideoCapture(0)
     #     self.cap1 = self.cap(self.capture)
@@ -42,7 +37,7 @@ class FaceMeshDetector:
         available_video_devices: list[int] = []
 
         for i in range(max_video_devices):
-            cap: cv2.VideoCapture = cv2.VideoCapture(i)
+            cap: cv.VideoCapture = cv.VideoCapture(i)
             if cap is None or not cap.isOpened():
                 print(f"カメラが利用できません: {i}")
             else:

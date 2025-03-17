@@ -9,11 +9,11 @@ localhost = ('127.0.0.1',8890)
 localaddr = ('0.0.0.0',8890)
 
 # メッセージの定義
-class MessageData(Enum):
-    START = 'kidousitade'
-    ALERT = 'akan'
-    STOP = 'tomareya'
-    HAYOKOI = ''
+# class MessageData(Enum):
+#     START = 'kidousitade'
+#     ALERT = 'akan'
+#     STOP = 'tomareya'
+#     HAYOKOI = ''
 
 class P2P:
     def __init__(self):

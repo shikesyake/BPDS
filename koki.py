@@ -1,9 +1,9 @@
 import socket
 import time
 
-#############################
-## GPIOピンを持たないデバイス用 ##
-##     完全独立動作可能      ##
+##############################
+## GPIOピンを持たないデバイス用  ##
+##        独立動作可能       ##
 #############################
 M_SIZE = 1024
 
@@ -40,7 +40,6 @@ while True:
             sock.sendto(b'tomareya'.encode(encoding='utf-8'),burocas)
             print(f'停止ボタン押下')
             
-            #スピーカー.off的な
             button = 0
         # while True:
         #     if message != ("tomareya"):
