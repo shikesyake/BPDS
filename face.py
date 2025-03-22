@@ -66,7 +66,7 @@ class FaceMeshDetector:
                 landmark_drawing_spec=self.drawing_spec,
                 connection_drawing_spec=self.drawing_spec)
 
-    def start(self):    # 安定するまで待機させる
+    def start(self,start_func):    # 安定するまで待機させる
         self.runcount = 0
         while self.cap.isOpened():
             tick = cv.getTickCount()

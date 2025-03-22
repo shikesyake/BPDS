@@ -10,7 +10,7 @@ FaceMesh = FaceMeshDetector()
 ##P2Psend.bind()
 
 def start_func():
-    P2Psend.kidou()
+    P2Psend.tuitade()
 
 def alert_func():
     P2Psend.akan()
@@ -21,4 +21,4 @@ def stop_func():
 # FaceMesh.cap[1].open(1)
 if FaceMesh.start(start_func) == 'kidou':
     exit
-FaceMesh.run(start_func,alert_func,stop_func)
+FaceMesh.run()
