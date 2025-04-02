@@ -1,8 +1,8 @@
-*.mp4
-*.code-workspace
+/.vscode
 venv
 __pycache__
-MycroPython
+*.mp4
+*.code-workspace
 *.png
 *.orig
 *.mp3
