@@ -12,7 +12,7 @@ p2p = P2P()
 
 class GPIO():
     def __init__(self):
-        self.button = gpiozero.Button(19, pull_up=True)
+        self.button = gpiozero.Button(21, pull_up=True)
         self.led = gpiozero.LED(17)
         self.buz = gpiozero.Buzzer(27)
         self.status = OFF
