@@ -10,12 +10,12 @@ FaceMesh = FaceMeshDetector()
 ##P2Psend.bind()
 
 def start_func():
-    P2Psend.tuitade()
+    P2Psend.detect_start()
 
 def alert_func():
-    P2Psend.akan()
+    P2Psend.alert()
 def stop_func():
-    P2Psend.tomareya()
+    P2Psend.stop_alert()
 # 実行
 # FaceMesh.cap[0].open(0)
 # FaceMesh.cap[1].open(1)

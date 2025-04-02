@@ -42,7 +42,7 @@ class FaceMeshDetector:
         available_video_devices: list[int] = []
 
         for i in range(max_video_devices):
-            cap: cv2.VideoCapture = cv2.VideoCapture(i)
+            cap: cv.VideoCapture = cv.VideoCapture(i)
             if cap is None or not cap.isOpened():
                 print(f"カメラが利用できません: {i}")
             else:
@@ -87,10 +87,10 @@ class FaceMeshDetector:
                     time.sleep(1)
                     if self.runcount == 5:
                         print("検知開始")                        
-                        self.p2p.tuitade()
+                        self.p2p.detect_start()
                         # self.burocas = ('broadcasthost',8890)
                         # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
-                        return ("kidou")
+                        return ("tuitade")
                     else:
                         continue
     # def ruun(self):
@@ -107,7 +107,7 @@ class FaceMeshDetector:
                 self.count += 1
                 if self.count == 20:
                     print("通知しました")                    
-                    self.p2p.akan()
+                    self.p2p.alert()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                 continue
@@ -129,7 +129,7 @@ class FaceMeshDetector:
                     self.count = 0
                 if self.count == 20:
                     print("通知しました")
-                    self.p2p.akan()
+                    self.p2p.alert()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)

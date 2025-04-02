@@ -23,7 +23,7 @@ sock.bind(localaddr)
 
 while True:
     if gpio.is_pressed():
-        p2p.tomareya()
+        p2p.stop_alert()
         print('停止ボタン押下')
     gpio.tick()
     try:

@@ -34,13 +34,13 @@ class P2P:
     
     #下要らんかも
 
-    def akan(self):
+    def alert(self):
         self.sock.sendto(b'akan', burocas)
    
-    def tuitade(self):
+    def detect_start(self):
         self.sock.sendto(b"tuitade", burocas)
 
-    def tomareya(self):
+    def stop_alert(self):
         self.sock.sendto(b"tomareya", burocas)
 
     def send(self, data):
