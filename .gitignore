@@ -6,4 +6,5 @@ MycroPython
 *.png
 *.orig
 *.mp3
+*.gz
 *.wav
