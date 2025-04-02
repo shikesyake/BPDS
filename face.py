@@ -1,7 +1,7 @@
 import mediapipe as mp
 import cv2 as cv
 import time
-from sendf import P2P
+from send import P2P
 
 class FaceMeshDetector:
     def __init__(self):
