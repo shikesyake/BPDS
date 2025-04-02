@@ -19,6 +19,6 @@ def stop_func():
 # 実行
 # FaceMesh.cap[0].open(0)
 # FaceMesh.cap[1].open(1)
-if FaceMesh.start(start_func) == 'kidou':
+if FaceMesh.start(start_func) == 'tuitade':
     exit
-FaceMesh.run()
+FaceMesh.run(start_func, alert_func, stop_func)
