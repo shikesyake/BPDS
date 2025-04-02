@@ -1,6 +1,8 @@
 # BPDS
 BPDS-幼児うつぶせ検出装置-
 
+oyaki
+koki 3.13.2 hi env
 ### envでの実行用
 ```sh
 cd BPDS/
