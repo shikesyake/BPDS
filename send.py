@@ -36,10 +36,8 @@ class P2P:
 
     def alert(self):
         self.sock.sendto(b'akan', burocas)
-   
     def detect_start(self):
         self.sock.sendto(b"tuitade", burocas)
-
     def stop_alert(self):
         self.sock.sendto(b"tomareya", burocas)
 

@@ -3,7 +3,7 @@ import time
 
 ##############################
 ## GPIOピンを持たないデバイス用  ##
-##        独立動作可能       ##
+##        単独動作可能       ##
 #############################
 M_SIZE = 1024
 
@@ -29,7 +29,7 @@ while True:
         message, cli_addr = sock.recvfrom(M_SIZE)
         message = message.decode(encoding='utf-8')
         print(f"{cli_addr}から"f'[{message}]を受信しました')
-        
+
         if message == "tuitade":
             print('親機が起動しました')
         elif message == "akan":
