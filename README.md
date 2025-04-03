@@ -1,6 +1,9 @@
 # BPDS
 BPDS-幼児うつぶせ検出装置-
 
+
+
+
 oyaki
 koki 3.13.2 hi env
 ### envでの実行用
@@ -14,11 +17,23 @@ sudo venv/bin/python3 kokit.py
 
 #### 1. 公式からPython3.12.9をインストール
 
-#### 2. レポジトリのクローン
-レポジトリをクローンし、cloneしたgitディレクトリに移動する
+#### 2. リポジトリのクローン
+リポジトリをクローンし、cloneしたgitディレクトリに移動する
 ```sh
 git clone https://github.com/shikesyake/BPDS.git && cd BPDS
 ```
+
+#### 3. モジュールのインストール
+pythonモジュールをインストールする
+```sh
+pip install -r requirements.txt
+```
+## ubuntuでの環境構築
+
+2番まではMacと同じ手順
+### 仮想環境の作成(親機のみ)
+BPDS直下でenvを作成する
+アクティベートする
 
 #### 3. モジュールのインストール
 pythonモジュールをインストールする
@@ -35,24 +50,27 @@ pip install -r requirements.txt
 
 main.pyの起動
 ```sh
-python3 ./main.py
+python3 main.py
 ```
 
 koki.pyの起動
 ```sh
-python3 ./koki.py
+python3 koki.py
 ```
 
 ## 機能
 ### main.py
 親機での実行を想定
+実行後、顔が一定時間検知され続けるまで待機
+待機し顔の検知を行う
 
 ### face.py
 
-モジュール
-顔の検出、うつ伏せ時の通知を送信する
-
+顔の検出、描画を行う
+うつ伏せ時の通知を送信する
 実行直後から検出が始まる
+### send.py
+送受信共用
 
 ### koki.py
 受信機。
@@ -60,7 +78,22 @@ python3 ./koki.py
 
 実行直後から受信待機状態になる
 
+通知受信時に
+tuitade 特に視覚的な変化はしない。
+ターミナルには送信元と通知内容が出力される。
+
+
+### kokit.py
+LEDやブザーを持つ機器用の受信機。
+基本的にkoki.pyと機能は変わらない。
+実行直後から受信待機状態になる
+
 通知受信時に出力される。
+
+
+
+### button.py
+
 ##
 ### 注意点
 - 接続したWebカメラの画角内に顔を収めた状態で両方実行しないとうつ伏せ検知がkokiに送信される。
