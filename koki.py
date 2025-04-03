@@ -1,10 +1,24 @@
 import socket
 import time
+from send import P2P
+from button import GPIO
 
 ##############################
-## GPIOピンを持たないデバイス用  ##
-##        単独動作可能       ##
-#############################
+##    GPIOピンの有無問わず動作  ##
+##        単独動作可能        ##
+##############################
+
+raspi = True
+try:
+    gpio = GPIO()
+    p2p = P2P()
+    raspi = True
+    print('GPIOが存在するデバイスです')
+except:
+    raspi = False
+    print('GPIOが存在しないデバイスです')
+
+
 M_SIZE = 1024
 
 kensyutu = 0
@@ -24,8 +38,14 @@ print('Waiting message')
 
 #if kensyutu == 1:
 while True:
-    try :
+    if raspi == True:
+        if gpio.is_pressed():
+            p2p.stop_alert()
+            print('停止ボタン押下')
+        gpio.tick()
+    try:
         # ③Clientからのmessageの受付開始
+        time.sleep(0.2)
         message, cli_addr = sock.recvfrom(M_SIZE)
         message = message.decode(encoding='utf-8')
         print(f"{cli_addr}から"f'[{message}]を受信しました')
@@ -34,18 +54,15 @@ while True:
             print('親機が起動しました')
         elif message == "akan":
             print('ALERT受信')
+            if raspi:
+                gpio.on()
         elif message == "tomareya":
             print('STOP受信')
-        # while True:
-        #     if message != ("tomareya"):
-        #         print('寺阪を受信しました')
-        #         sock.sendto('寺阪を受信'.encode(encoding='utf-8'), burocas)
-        #         print('受信確認を送信しました')
-        #         break
-
+            if raspi:
+                gpio.off()
+                
     except socket.timeout:
         continue
     except KeyboardInterrupt:
         print ('\n . . .\n')
         sock.close()
-        break

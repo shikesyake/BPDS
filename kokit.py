@@ -1,34 +1,31 @@
 import socket
 import time
-from send import P2P
-from button import GPIO
 
-gpio = GPIO()
-p2p = P2P()
-
-START = f'kidousitade'
-ALERT = f'akan'
-STOP = f'tomareya'
-HAYOKOI = f''
-
+##############################
+## GPIOピンを持たないデバイス用  ##
+##        単独動作可能       ##
+#############################
 M_SIZE = 1024
-localaddr = ('0.0.0.0', 8890)
+
+kensyutu = 0
+button = 0
+# 
+locaddr = ('0.0.0.0', 8890)
 burocas = ('255.255.255.255',8890)
 # ①ソケットを作成する
 sock = socket.socket(socket.AF_INET, type=socket.SOCK_DGRAM)
-sock.settimeout(0.01)
+sock.settimeout(0.1)
 print('create socket')
-sock.bind(localaddr)
+
+# ②自ホストで使用するIPアドレスとポート番号を指定
+sock.bind(locaddr)
+print('Waiting message')
 
 
+#if kensyutu == 1:
 while True:
-    if gpio.is_pressed():
-        p2p.stop_alert()
-        print('停止ボタン押下')
-    gpio.tick()
-    try:
+    try :
         # ③Clientからのmessageの受付開始
-        time.sleep(0.2)
         message, cli_addr = sock.recvfrom(M_SIZE)
         message = message.decode(encoding='utf-8')
         print(f"{cli_addr}から"f'[{message}]を受信しました')
@@ -37,18 +34,21 @@ while True:
             print('親機が起動しました')
         elif message == "akan":
             print('ALERT受信')
-            gpio.on()
         elif message == "tomareya":
             print('STOP受信')
-            gpio.off()
-            #鳴動後停止
+        # while True:
+        #     if message != ("tomareya"):
+        #         print('寺阪を受信しました')
+        #         sock.sendto('寺阪を受信'.encode(encoding='utf-8'), burocas)
+        #         print('受信確認を送信しました')
+        #         break
 
-        
     except socket.timeout:
         continue
     except KeyboardInterrupt:
         print ('\n . . .\n')
         sock.close()
+        break
 
 
 
