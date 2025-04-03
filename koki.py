@@ -28,8 +28,8 @@ while True:
         # ③Clientからのmessageの受付開始
         message, cli_addr = sock.recvfrom(M_SIZE)
         message = message.decode(encoding='utf-8')
-        print(f'[{message}]を受信しました')
-
+        print(f"{cli_addr}から"f'[{message}]を受信しました')
+        
         if message == "tuitade":
             print('親機が起動しました')
         elif message == "akan":
