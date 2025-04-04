@@ -30,10 +30,6 @@ class P2P:
         self.sock.bind(localaddr)
 
 
-
-    
-    #下要らんかも
-
     def alert(self):
         self.sock.sendto(b'akan', burocas)
     def detect_start(self):
