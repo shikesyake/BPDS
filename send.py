@@ -41,8 +41,10 @@ class P2P:
         for i in range(3):
             try:
                 self.sock.sendto(data, burocas)
+                break
             except:
-                print("")
+                print("失敗")
+                continue
 
 
         
