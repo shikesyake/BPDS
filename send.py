@@ -5,8 +5,8 @@ from enum import Enum
 # 定数
 M_SIZE = 1024
 burocas = ('255.255.255.255',8890)
-localhost = ('127.0.0.1',8890)
-localaddr = ('0.0.0.0',8890)
+# localhost = ('127.0.0.1',8890)
+# localaddr = ('0.0.0.0',8890)
 
 # メッセージの定義
 # class MessageData(Enum):
@@ -25,9 +25,9 @@ class P2P:
         self.localaddr = ('0.0.0.0',8890)
 
     def bind(self):
-        self.sock.bind(localhost)
+        self.sock.bind(self.localhost)
     def bindb(self):
-        self.sock.bind(localaddr)
+        self.sock.bind(self.localaddr)
 
 
     def alert(self):

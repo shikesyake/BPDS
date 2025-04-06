@@ -16,7 +16,7 @@ raspi = False
 keyboard = True
 p2p = P2P()
 
-
+# GPIOの有無を判定
 try:
     gpio = GPIO()
     raspi = True
@@ -24,11 +24,8 @@ try:
 except:
     raspi = False
     print('GPIOが存在しないデバイスです')
-    try:
-        inputkey = readchar.readchar()
-    except:
-        keyboard = False
-        print('キー操作不可')
+    keyboard = True
+
 
 M_SIZE = 1024
 
@@ -45,7 +42,7 @@ print('create socket')
 # ②自ホストで使用するIPアドレスとポート番号を指定
 ##送信する場合はバインドを外す
 
-#sock.bind(locaddr)
+sock.bind(("localhost",8890)) # type: ignore
 print('Waiting message')
 
 
@@ -56,6 +53,8 @@ while True:
             p2p.stop_alert()
             print('停止ボタン押下')
         gpio.tick()
+
+
     elif keyboard == True:
         inputkey = readchar.readchar()
         if inputkey == "t":
@@ -65,6 +64,7 @@ while True:
         elif inputkey == "s":
             p2p.alert()
             print('アラートボタン押下')  
+
     try:
         # ③Clientからのmessageの受付開始
         #time.sleep(0.2)
