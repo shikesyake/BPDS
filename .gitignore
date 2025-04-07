@@ -9,5 +9,4 @@ __pycache__
 *.gz
 *.wav
 *.gz
-MycroPython/raspi
 __pycache__
