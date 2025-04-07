@@ -43,19 +43,30 @@ while True:
     if raspi == True:
         if gpio.is_pressed():
             p2p.stop_alert()
+            gpio.off()
+            sendby = True
             print('停止ボタン押下')
         gpio.tick()
-    
+        time.sleep(0.1)
+
     if kb.is_pressed("escape"):
         p2p.stop_alert()
         sendby = True
         print('停止ボタン押下')
+
+        if raspi:
+            gpio.off()
         time.sleep(0.1)
+
     elif kb.is_pressed("space"):
         p2p.alert()
         sendby = True
         print('アラートボタン押下')
+        if raspi:#
+            gpio.on()
+            gpio.tick()
         time.sleep(0.1)
+
     try:
         # ③Clientからのmessageの受付開始
         #time.sleep(0.2)
