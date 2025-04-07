@@ -1,12 +1,10 @@
-.vscode
 venv
+.vscode
 __pycache__
-*.mp4
 *.code-workspace
-*.png
 *.orig
-*.mp3
-*.gz
+*.png
 *.wav
+*.mp3
+*.mp4
 *.gz
-__pycache__
