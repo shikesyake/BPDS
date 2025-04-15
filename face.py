@@ -6,7 +6,8 @@ from send import P2P
 class FaceMeshDetector:
     def __init__(self):
         self.count = 0
-        self.alert = 0
+        self.alert = False
+        self.renzoku = True
         self.p2p = P2P()
         self.mp_drawing = mp.solutions.drawing_utils  # 描画用のインスタンス
         self.mp_face_mesh = mp.solutions.face_mesh  # MLソリューションの顔メッシュインスタンス
@@ -59,7 +60,8 @@ class FaceMeshDetector:
         results = self.face_mesh.process(image)
         image.flags.writeable = True
         image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
-        image = cv.resize(image,dsize=(1200, 900))
+        # image = cv.resize(image,dsize=(1200, 900))
+        image = cv.resize(image,dsize=(256, 144))
         return results, image
 
     def draw_landmarks(self, image, face_landmarks):
@@ -106,27 +108,35 @@ class FaceMeshDetector:
                 print("通知まで:", 20 - self.count)
                 self.count += 1
                 if self.count == 20:
-                    print("通知しました")                    
+                    print("通知しました")
                     self.p2p.alert()
                     # self.burocas = ('broadcasthost',8890)
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                 continue
+
             results, image = self.process_frame(image)
             if results.multi_face_landmarks:
                 self.draw_landmarks(image, results)
-                if self.alert == 1:
-                    self.count -= 1
-                    if self.count == 0:
-                        self.alert = 0
-                # GPIO.output(led, 0)
+                if self.renzoku == False:
+                    self.count = 0
+                    print("タイマーをリセットしました")
+                    self.renzoku = True
+
+                # if self.count <= 2:
+                #     self.count = 20
+                #     renzoku = False
+                
+                #     self.count -= 1
+                #     if self.count == 0:
+                #         self.alert = 0
+                # # GPIO.output(led, 0)
 ##                time.sleep(0.05)
+
             else:
                 print("顔が検出されなくなりました。")
                 print("通知まで:", 20 - self.count)
                 self.count += 1
                 time.sleep(0.1)
-                if results.multi_face_landmarks:
-                    self.count = 0
                 if self.count == 20:
                     print("通知しました")
                     self.p2p.alert()
@@ -134,7 +144,20 @@ class FaceMeshDetector:
                     # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
                     time.sleep(0.5)
                     self.count = 0
+                    self.alert = True
                     
+                elif self.renzoku:
+                    self.count = 0
+                    #print("連続検知を解除しました")
+                    self.renzoku = False
+                
+                # else:
+                #     self.count -= 1
+            
+                # if self.count <= 18 and results.multi_face_landmarks:
+                    
+                #     print("通知まで:", 20 - self.count)
+                #     self.count += 0                    
 
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
             cv.putText(
