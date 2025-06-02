@@ -92,3 +92,7 @@ while True:
     except KeyboardInterrupt:
         print ('\n . . .\n')
         sock.close()
+
+# if __name__ == "__main__":
+#     detector = FaceMeshDetector()
+#     detector.run()
