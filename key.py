@@ -3,6 +3,9 @@ import threading
 
 from readchar import readkey, key as inchar
 
+###############
+##キーボード操作##
+###############
 
 class CheckKey():
     def __init__(self):

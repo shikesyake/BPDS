@@ -1,5 +1,8 @@
 from send import P2P
 import sys
+
+# デバッグ用ファイル
+
 # 定義
 P2Psend = P2P()
 # バインド

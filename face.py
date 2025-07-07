@@ -2,7 +2,9 @@ import mediapipe as mp
 import cv2 as cv
 import time
 from send import P2P
-
+####################
+# 顔の認識、カウント処理 #
+#####################
 class FaceMeshDetector:
     def __init__(self):
         self.count = 0

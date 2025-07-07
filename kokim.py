@@ -6,7 +6,7 @@ import keyboard as kb
 #子機モジュール化
 
 
-# グローバル変数
+# socket用変数
 M_SIZE = 1024
 locaddr = ('0.0.0.0', 8890)
 burocas = ('255.255.255.255', 8890)
