@@ -32,7 +32,7 @@ def stop_func():
 # 実行
 # FaceMesh.cap[0].open(0)
 # FaceMesh.cap[1].open(1)
-if FaceMesh.start(start_func) == 'tuitade':
+if gpio.detect(start_func) == 'tuitade':
     if raspi:
         gpio.gled.on()
 

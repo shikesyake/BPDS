@@ -13,6 +13,9 @@ OFF=0
 
 p2p = P2P()
 FaceMesh = FaceMeshDetector()
+def start_func():
+    p2p.detect_start()
+
 class GPIO():
     def __init__(self):
         self.button = gpiozero.Button(21, pull_up=True)
@@ -36,25 +39,20 @@ class GPIO():
                  self.buz.on()
              self.tick_status = not(self.tick_status)
 ###
-    def detect(self):
-        self.gled.on()
     
     def st_is_pressed(self):
         return self.gbutton.is_pressed == 1
+    
     def stop_detect(self):
         self.gled.off()
         
-    def run(self):
-        while FaceMesh.start() == 'antei':
-            self.detect()
-
-            while not self.gbutton.is_pressed:
-                print("起動まで", 5 - self.runcount)
-                self.runcount += 1
-                time.sleep(1)
-                if self.runcount == 5:
-                    print("起動しました")
-                    break
+    def detect(self,st_is_pressed):
+        if FaceMesh.start(start_func) == 'antei':
+            if st_is_pressed:
+                print("起動しました")
+                self.gled.on()
+                p2p.detect_start()
+                return("tuitade")
 ###
 
     def on(self):

@@ -90,11 +90,11 @@ class FaceMeshDetector:
                     self.runcount += 1
                     time.sleep(1)
                     if self.runcount == 5:
-                        print("検知開始")                        
+                        print("検知開始")
                         self.p2p.detect_start()
                         # self.burocas = ('broadcasthost',8890)
                         # self.sock.sendto('akan'.encode(encoding='utf-8'),self.burocas)
-                        return ("tuitade")
+                        return ("antei")
                     else:
                         continue
     # def ruun(self):
