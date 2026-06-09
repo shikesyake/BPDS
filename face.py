@@ -1,10 +1,13 @@
-import mediapipe as mp
-import cv2 as cv
 import time
+import cv2 as cv
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 from send import P2P
 
+
 class FaceMeshDetector:
-    def __init__(self):
+    def __init__(self, model_path: str):
         self.count = 0
         self.alert = False
         self.renzoku = True
@@ -22,6 +25,15 @@ class FaceMeshDetector:
         self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
         self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
         self.video = cv.VideoWriter('face_mesh_video.mp4', self.fourcc, 30, (1920,1080))
+
+        # ドキュメント：BaseOptions の model_asset_path 指定
+        base_options = python.BaseOptions(model_asset_path=model_path)
+        
+        # ドキュメント：FaceDetectorOptions の設定
+        face_detector_options = vision.FaceDetectorOptions(base_options=base_options)
+        
+        # ドキュメント：create_from_options 関数を使用
+        self.detector = vision.FaceDetector.create_from_options(face_detector_options)
 
         # self.cap2 = cv.VideoCapture(1)
         # self.w2 = int(self.cap2.get(cv.CAP_PROP_FRAME_WIDTH))
@@ -53,17 +65,32 @@ class FaceMeshDetector:
             return available_video_devices
     
 
-    def process_frame(self, image):
+    # def process_frame(self, image):
         
-        image = cv.cvtColor(cv.flip(image, 1), cv.COLOR_BGR2RGB)
-        image.flags.writeable = False
-        results = self.face_mesh.process(image)
-        image.flags.writeable = True
-        image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
-        # image = cv.resize(image,dsize=(1200, 900))
-        image = cv.resize(image,dsize=(256, 144))
-        return results, image
+    #     image = cv.cvtColor(cv.flip(image, 1), cv.COLOR_BGR2RGB)
+    #     image.flags.writeable = False
+    #     results = self.face_mesh.process(image)
+    #     image.flags.writeable = True
+    #     image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
+    #     # image = cv.resize(image,dsize=(1200, 900))
+    #     image = cv.resize(image,dsize=(256, 144))
+    #     return results, image
 
+    def process_frame(self, image):
+        """
+        画像を処理し、顔検出結果を返す
+        """
+        # ドキュメント：mediapipe.Image オブジェクトへの変換
+        # 入力画像が numpy 配列 (cv2で読み込んだもの) であると仮定
+        
+        # RGB 変換 (OpenCVはBGRなので必要に応じて)
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
+        
+        # ドキュメント：detect 関数を使用 (IMAGE モードの場合)
+        detection_result = self.detector.detect(mp_image)
+        
+        return detection_result
+    
     def draw_landmarks(self, image, face_landmarks):
         for face_landmarks in face_landmarks.multi_face_landmarks:
             # print(face_landmarks)

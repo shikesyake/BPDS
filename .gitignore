@@ -1,5 +1,8 @@
 venv
 .vscode
+.env
+.continue
+models
 __pycache__
 *.code-workspace
 *.orig
