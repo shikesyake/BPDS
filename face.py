@@ -168,18 +168,23 @@ class FaceMeshDetector:
                     self.count = 0
                     print("タイマーをリセットしました")
                     self.renzoku = True
+                    self.alert = False
+                    
             else:
                 # 顔が検出されなくなった場合
-                print("顔が検出されなくなりました。")
-                print("通知まで:", 20 - self.count)
-                self.count += 1
-                time.sleep(0.1)
-                
+                if self.alert == False:
+                    print("顔が検出されなくなりました。")
+                    print("通知まで:", 20 - self.count)
+                    self.count += 1
+                    time.sleep(0.1)
+                    self.renzoku = False
+                    
                 if self.count == 20:
                     print("通知しました")
                     self.p2p.alert()
                     self.count = 0
                     self.renzoku = False
+                    self.alert = True
                 
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
             cv.putText(
