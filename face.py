@@ -40,7 +40,7 @@ class FaceMeshDetector:
         self.w = int(self.cap.get(cv.CAP_PROP_FRAME_WIDTH))
         self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
         self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
-        self.video = cv.VideoWriter('face_detector_video.mp4', self.fourcc, 30, (256, 144))
+        self.video = cv.VideoWriter('face_detector_video.mp4', self.fourcc, 30, (512, 288))
     
     def get_available_video_devices(self, max_video_devices: int = 10):
         """
@@ -76,30 +76,23 @@ class FaceMeshDetector:
         
         # IMAGE モードで同期推論を実行する
         detection_result = self.detector.detect(mp_image)
-				# # 推論実行 (ライブストリームモード)
-        # try:
-        #     detection_result = self.detector.detect_for_async_video(mp_image, timestamp_ms=int(time.time() * 1000))
-        # except Exception as e:
-        #     # タイムスタンプの形式によってはエラーになる場合があるため、IMAGE モードで再試行する
-        #     detection_result = self.detector.detect(mp_image)
-        if detection_result.detections:
-            # 結果を画像上に描画
-            # Detection は bbox を含む
-            for face_detection in detection_result.detections:
-                # バウンディングボックスの描画
-                top_left = (int(face_detection.bounding_box.origin_x), int(face_detection.bounding_box.origin_y))
-                bottom_right = (int(face_detection.bounding_box.origin_x + face_detection.bounding_box.width), 
-                                int(face_detection.bounding_box.origin_y + face_detection.bounding_box.height))
-                cv.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
-                
-                # 顔のポイント描画 (keypoints)
-                if hasattr(face_detection, 'keypoints'):
-                    for point in face_detection.keypoints:
-                        pt = (int(point.x), int(point.y))
-                        cv.circle(image, pt, 5, (0, 0, 255), -1)
+
+        # 検出結果のリストを取り出してループ (存在しない場合は空リスト)
+        detections = detection_result.detections or []
+        for face_detection in detections:
+            # バウンディングボックスの描画
+            top_left = (int(face_detection.bounding_box.origin_x), int(face_detection.bounding_box.origin_y))
+            bottom_right = (int(face_detection.bounding_box.origin_x + face_detection.bounding_box.width), 
+                            int(face_detection.bounding_box.origin_y + face_detection.bounding_box.height))
+            cv.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
+
+            # 顔のポイント描画 (存在する場合のみループ)
+            for point in getattr(face_detection, 'keypoints', []):
+                pt = (int(point.x), int(point.y))
+                cv.circle(image, pt, 5, (0, 0, 255), -1)
 
         # 画像の縮小
-        image = cv.resize(image, dsize=(256, 144))
+        image = cv.resize(image, dsize=(512, 288))
         
         return detection_result, image
 
@@ -127,9 +120,10 @@ class FaceMeshDetector:
                 continue
             
             results, image = self.process_frame(image)
-            
-            # 顔が検出されるまで待機
-            if results.detections:
+
+            # 検出の有無を一度だけ評価して使い回す
+            has_face = bool(getattr(results, 'detections', None))
+            if has_face:
                 print("起動まで", 5 - self.runcount)
                 self.runcount += 1
                 time.sleep(1)
@@ -161,29 +155,27 @@ class FaceMeshDetector:
                 continue
 
             results, image = self.process_frame(image)
-            
-            if results.detections:
-                # 顔が検出された場合
-                if self.renzoku == False:
+
+            has_face = bool(getattr(results, 'detections', None))
+            if has_face:
+                # 顔が検出された場合にのみリセット処理
+                if not self.renzoku:
                     self.count = 0
                     print("タイマーをリセットしました")
                     self.renzoku = True
                     self.alert = False
-                    
             else:
-                # 顔が検出されなくなった場合
-                if self.alert == False:
+                # 顔が検出されなくなった場合のカウント処理
+                if not self.alert == True:
                     print("顔が検出されなくなりました。")
                     print("通知まで:", 20 - self.count)
                     self.count += 1
                     time.sleep(0.1)
                     self.renzoku = False
-                    
-                if self.count == 20:
+                if self.count >= 20 and not self.alert:
                     print("通知しました")
                     self.p2p.alert()
                     self.count = 0
-                    self.renzoku = False
                     self.alert = True
                 
             fps = cv.getTickFrequency() / (cv.getTickCount() - tick)
@@ -204,7 +196,7 @@ class FaceMeshDetector:
                 break
             if cv.waitKey(5) & 0xFF == 32:  # space でスクリーンショット
                 dt = time.strftime("%Y%m%d_%H%M%S")
-                cv.imwrite(f"{dt}.png", image)
+                cv.imwrite(f"./pics/{dt}.png", image)
         
         self.video.release()
         self.cap.release()
