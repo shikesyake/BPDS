@@ -10,10 +10,14 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 class FaceMeshDetector:
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str, use_display: bool = True, frame_callback=None, on_started=None):
         self.count = 0
         self.alert = False
         self.renzoku = True
+        self._running = False
+        self.use_display = use_display
+        self.frame_callback = frame_callback
+        self.on_started = on_started
         self.p2p = P2P()
         
         # MediaPipe FaceDetector の初期化
@@ -38,9 +42,15 @@ class FaceMeshDetector:
         # カメラ設定
         self.cap = cv.VideoCapture(0)
         self.w = int(self.cap.get(cv.CAP_PROP_FRAME_WIDTH))
-        self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))         
-        self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')  
-        self.video = cv.VideoWriter('face_detector_video.mp4', self.fourcc, 30, (512, 288))
+        self.h = int(self.cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+        if self.use_display:
+            self.fourcc = cv.VideoWriter_fourcc('m', 'p', '4', 'v')
+            try:
+                self.video = cv.VideoWriter('face_detector_video.mp4', self.fourcc, 30, (512, 288))
+            except Exception:
+                self.video = None
+        else:
+            self.video = None
     
     def get_available_video_devices(self, max_video_devices: int = 10):
         """
@@ -102,18 +112,30 @@ class FaceMeshDetector:
             self.detector.close()
             self.detector = None
         if getattr(self, "video", None) is not None:
-            self.video.release()
+            try:
+                self.video.release()
+            except Exception:
+                pass
             self.video = None
         if getattr(self, "cap", None) is not None:
-            self.cap.release()
+            try:
+                self.cap.release()
+            except Exception:
+                pass
             self.cap = None
+        if self.use_display:
+            try:
+                cv.destroyAllWindows()
+            except Exception:
+                pass
 
     def start(self, start_func):
         """
         検出を開始するまでの待機ロジック
         """
         self.runcount = 0
-        while self.cap.isOpened():
+        self._running = True
+        while self._running and self.cap.isOpened():
             tick = cv.getTickCount()
             success, image = self.cap.read()
             if not success:
@@ -130,6 +152,12 @@ class FaceMeshDetector:
                 if self.runcount == 5:
                     print("検知開始")
                     self.p2p.detect_start()
+                    # notify that run will start
+                    try:
+                        if callable(self.on_started):
+                            self.on_started()
+                    except Exception:
+                        pass
                     return "tuitade"
             else:
                 # 検出されない場合はリセット
@@ -141,7 +169,8 @@ class FaceMeshDetector:
         """
         メインの検出ループ
         """
-        while self.cap.isOpened():
+        self._running = True
+        while self._running and self.cap.isOpened():
             tick = cv.getTickCount()
             success, image = self.cap.read()
             if not success:
@@ -155,6 +184,14 @@ class FaceMeshDetector:
                 continue
 
             results, image = self.process_frame(image)
+
+            # フレームコールバック（GUI用）
+            try:
+                if callable(self.frame_callback):
+                    # 渡すのはBGRのnumpy配列
+                    self.frame_callback(image.copy())
+            except Exception:
+                pass
 
             has_face = bool(getattr(results, 'detections', None))
             if has_face:
@@ -188,15 +225,51 @@ class FaceMeshDetector:
                 (0, 255, 0),
                 2,
                 cv.LINE_AA)
-            
-            cv.imshow('MediaPipe FaceDetector', image)
-            self.video.write(image)
-            
-            if cv.waitKey(5) & 0xFF == 27:  # esc で終了
-                break
-            if cv.waitKey(5) & 0xFF == 32:  # space でスクリーンショット
-                dt = time.strftime("%Y%m%d_%H%M%S")
-                cv.imwrite(f"./pics/{dt}.png", image)
+            # 表示や保存は use_display が True の場合のみ行う
+            if self.use_display:
+                try:
+                    cv.imshow('MediaPipe FaceDetector', image)
+                except Exception:
+                    pass
+                if getattr(self, 'video', None) is not None:
+                    try:
+                        self.video.write(image)
+                    except Exception:
+                        pass
+                try:
+                    key = cv.waitKey(5) & 0xFF
+                except Exception:
+                    key = None
+                if key == 27:  # esc で終了
+                    break
+                if key == 32:  # space でスクリーンショット
+                    dt = time.strftime("%Y%m%d_%H%M%S")
+                    try:
+                        cv.imwrite(f"./pics/{dt}.png", image)
+                    except Exception:
+                        pass
         
-        self.video.release()
-        self.cap.release()
+        if getattr(self, "video", None) is not None:
+            try:
+                self.video.release()
+            except Exception:
+                pass
+        if getattr(self, "cap", None) is not None:
+            try:
+                self.cap.release()
+            except Exception:
+                pass
+        if self.use_display:
+            try:
+                cv.destroyAllWindows()
+            except Exception:
+                pass
+
+    def stop_detection(self):
+        """外部から検出ループを止める。"""
+        self._running = False
+        try:
+            if getattr(self, 'cap', None) is not None:
+                self.cap.release()
+        except Exception:
+            pass
